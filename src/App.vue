@@ -7,6 +7,7 @@ let songs = null;
 
 let index = 0;
 const isPlaying = ref(false);
+const duration = ref(339);
 
 const options = {
 	success: function(files) {
@@ -33,11 +34,11 @@ onMounted(()=> {
 function setSong(address,i) {
 	let audio = document.getElementById("audio");
 	audio.pause();
-	audio.src = address
 	song.value = address;
 	audio.load();
 	audio.play();
 	index = i;
+	duration.value = audio.duration;
 }
 
 function songPaused() {
@@ -45,11 +46,24 @@ function songPaused() {
 }
 
 function songPlayed() {
-	console.log("playing");
 	isPlaying.value = true;
 }
 function songNext() {
-	song.value = songs[++index];
+	let audio = document.getElementById("audio");
+	audio.pause();
+	song.value = songs[++index].link;
+	audio.load();
+	audio.play();
+	duration.value = audio.duration;
+}
+
+function songPrevious() {
+	let audio = document.getElementById("audio");
+	audio.pause();
+	song.value = songs[--index].link;
+	audio.load();
+	audio.play();
+	duration.value = audio.duration;
 }
 
 </script>
@@ -72,7 +86,7 @@ function songNext() {
 				<source :src="song" type="audio/mpeg">
 			</audio>
 			{{ songs[index].name }}
-			<MediaController v-model="isPlaying"/>
+			<MediaController v-model="isPlaying" :nextFunction="songNext" :previousFunction="songPrevious" :time=duration />
 		</template>
 		<div v-else>
 			<button id="dropboxbutton">Esperando a dropbox</button>
