@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64px" height="64px">
+<g>
+<linearGradient id="P1_3" x1="16.67%" y1="16.67%" x2="83.33%" y2="83.33%" ><stop offset="0%" stop-color="#8300ff" /><stop offset="100%" stop-color="#0075fc" /></linearGradient>
+<polyline fill="none" stroke-width="10" stroke="url(#P1_3)" stroke-linecap="round" stroke-linejoin="round" points="27.9701,8.33915 21.9052,44.1696" />
+<linearGradient id="P1_4" x1="16.67%" y1="16.67%" x2="83.33%" y2="83.33%" ><stop offset="0%" stop-color="#8300ff" /><stop offset="100%" stop-color="#0075fc" /></linearGradient>
+<ellipse cx="15.7606px" cy="42.9726px" rx="10.2544px" ry="10.5736px" fill="url(#P1_4)" />
+<linearGradient id="P1_5" x1="16.67%" y1="16.67%" x2="83.33%" y2="83.33%" ><stop offset="0%" stop-color="#8300ff" /><stop offset="100%" stop-color="#0075fc" /></linearGradient>
+<path fill="none" stroke-width="7" stroke="url(#P1_5)" stroke-linecap="round" stroke-linejoin="round" d="M 30.9227 7.06234 C 35.0191 6.65003 39.1156 6.23773 42.8928 6.90274 C 46.67 7.56775 50.128 9.31007 53.586 11.0524" />
+</g>
+</svg>
