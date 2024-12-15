@@ -55,7 +55,7 @@ function setSong(address) {
 			<MediaController/>
 		</template>
 		<div v-else>
-			<button id="dropboxbutton"></button>
+			<button id="dropboxbutton">Esperando a dropbox</button>
 		</div>
 	</p>
 </template>
