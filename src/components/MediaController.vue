@@ -1,27 +1,23 @@
 <script setup>
 import {ref} from "vue";
 const props = defineProps({
-	time: Number,
+	time: Number
 })
-
-let intervalId;
-let timer = ref(0);
-let isPlaying = ref(false);
+const timer = ref(0);
+const isPlaying = ref(false);
 
 function play() {
-var audio = document.getElementById("audio");
-	audio.play();
-	isPlaying.value = true;
-	intervalId = setInterval(() =>{
-		timer.value += props.time/100;
-	},1000);
+	if (!isPlaying.value) {
+		var audio = document.getElementById("audio");
+		audio.play();
+		isPlaying.value = true;
+		console.log("ture");
+	}
 }
 
 function pause() {
-  clearInterval(intervalId);
-  isPlaying.value = false;
-  var audio = document.getElementById("audio");
-  audio.pause();
+	isPlaying.value = false;;
+	audio.pause();
 };
 </script>
 

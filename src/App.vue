@@ -2,13 +2,13 @@
 import MediaController from './components/MediaController.vue'
 import {ref, onMounted} from "vue";
 
-let song = ref(null);
+const song = ref(null);
 let songs = null;
 
 const options = {
 	success: function(files) {
+		songs = files;
 		song.value = files[0].link;
-		console.log("ran");
 	},
 	linkType: "direct",
 	multiselect: true,
@@ -20,28 +20,54 @@ onMounted(()=> {
 	script.src = 'https://www.dropbox.com/static/api/2/dropins.js';
 	script.id = 'dropboxjs';
 	script.setAttribute('data-app-key', '3p019xr3e3jhfqb');
-	script.onload = ()=> {
+	script.onload = () => {
 		var button = Dropbox.createChooseButton(options);
 		document.getElementById("dropboxbutton").replaceWith(button);
 	}
 	document.body.appendChild(script);
 });
-	
+
+function setSong(address) {
+	let audio = document.getElementById("audio");
+	console.log(audio);
+	audio.pause();
+	audio.src = address
+	song.value = address;
+	audio.load();
+	audio.play();
+}
 </script>
 
 <template>
+	<div class="left">
+		<p v-for="song in songs">
+			<button @click="setSong(song.link)">
+				{{ song.name }}
+			</button>	
+		</p>
+	</div>
 	<h1>IctoPlayer</h1>
 	<p>
 		<template v-if="song">
 			<audio id="audio">
 				<source :src="song" type="audio/mpeg">
 			</audio>
-			<MediaController></MediaController>
+			<MediaController/>
 		</template>
 		<div v-else>
-			<p>Inicia sesión en Dropbox</p>
 			<button id="dropboxbutton"></button>
 		</div>
-		<br><br>
 	</p>
 </template>
+
+<style>
+.left {
+	position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    background-color: white;
+    overflow-y: auto;
+}
+</style>
