@@ -30,13 +30,14 @@ onMounted(()=> {
 	document.body.appendChild(script);
 });
 
-function setSong(address) {
+function setSong(address,i) {
 	let audio = document.getElementById("audio");
 	audio.pause();
 	audio.src = address
 	song.value = address;
 	audio.load();
 	audio.play();
+	index = i;
 }
 
 function songPaused() {
@@ -55,8 +56,8 @@ function songNext() {
 
 <template>
 	<div class="left">
-		<p v-for="song in songs">
-			<button @click="setSong(song.link)">
+		<p v-for="(song,index) in songs">
+			<button @click="setSong(song.link,index)">
 				{{ song.name }}
 			</button>	
 		</p>
@@ -70,6 +71,7 @@ function songNext() {
 			@ended="songNext">
 				<source :src="song" type="audio/mpeg">
 			</audio>
+			{{ songs[index].name }}
 			<MediaController v-model="isPlaying"/>
 		</template>
 		<div v-else>
