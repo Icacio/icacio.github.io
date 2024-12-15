@@ -5,6 +5,9 @@ import {ref, onMounted} from "vue";
 const song = ref(null);
 let songs = null;
 
+let index = 0;
+const isPlaying = ref(false);
+
 const options = {
 	success: function(files) {
 		songs = files;
@@ -29,13 +32,25 @@ onMounted(()=> {
 
 function setSong(address) {
 	let audio = document.getElementById("audio");
-	console.log(audio);
 	audio.pause();
 	audio.src = address
 	song.value = address;
 	audio.load();
 	audio.play();
 }
+
+function songPaused() {
+	isPlaying.value = false;
+}
+
+function songPlayed() {
+	console.log("playing");
+	isPlaying.value = true;
+}
+function songNext() {
+	song.value = songs[++index];
+}
+
 </script>
 
 <template>
@@ -49,10 +64,13 @@ function setSong(address) {
 	<h1>IctoPlayer</h1>
 	<p>
 		<template v-if="song">
-			<audio id="audio">
+			<audio id="audio"
+			@play="songPlayed"
+			@pause="songPaused"
+			@ended="songNext">
 				<source :src="song" type="audio/mpeg">
 			</audio>
-			<MediaController/>
+			<MediaController v-model="isPlaying"/>
 		</template>
 		<div v-else>
 			<button id="dropboxbutton">Esperando a dropbox</button>
