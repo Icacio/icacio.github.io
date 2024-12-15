@@ -1,4 +1,5 @@
 <script setup>
+import {ref} from "vue";
 const props = defineProps({
 	time: Number,
 })
@@ -8,7 +9,7 @@ let timer = ref(0);
 let isPlaying = ref(false);
 
 function play() {
-var audio = document.getElementById("myaudio");
+var audio = document.getElementById("audio");
 	audio.play();
 	isPlaying.value = true;
 	intervalId = setInterval(() =>{
@@ -19,7 +20,7 @@ var audio = document.getElementById("myaudio");
 function pause() {
   clearInterval(intervalId);
   isPlaying.value = false;
-  var audio = document.getElementById("myaudio");
+  var audio = document.getElementById("audio");
   audio.pause();
 };
 </script>

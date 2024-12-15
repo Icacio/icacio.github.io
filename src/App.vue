@@ -32,10 +32,12 @@ onMounted(()=> {
 <template>
 	<h1>IctoPlayer</h1>
 	<p>
-		<audio v-if="song" id="myAudio">
-			<source :src="song" type="audio/mpeg">
-			<MediaController/>
-		</audio>
+		<template v-if="song">
+			<audio id="audio">
+				<source :src="song" type="audio/mpeg">
+			</audio>
+			<MediaController></MediaController>
+		</template>
 		<div v-else>
 			<p>Inicia sesión en Dropbox</p>
 			<button id="dropboxbutton"></button>
