@@ -7,12 +7,16 @@ let songs = null;
 
 let index = 0;
 const isPlaying = ref(false);
-const duration = ref(339);
+const duration = ref(1);
 
 const options = {
 	success: function(files) {
 		songs = files;
 		song.value = files[0].link;
+		let audio = document.getElementById("audio");
+		if (audio) {
+			duration.value = audio.duration;
+		}
 	},
 	linkType: "direct",
 	multiselect: true,
