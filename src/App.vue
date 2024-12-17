@@ -1,6 +1,6 @@
 <script setup>
 import MediaController from './components/MediaController.vue'
-import {ref, onMounted} from "vue";
+import {ref, onMounted, useTemplateRef} from "vue";
 
 const song = ref(null);
 let songs = null;
@@ -8,6 +8,7 @@ let songs = null;
 let index = 0;
 const isPlaying = ref(false);
 const duration = ref(1);
+const audioTag = useTemplateRef("audioElement")
 
 const options = {
 	success: function(files) {
@@ -35,14 +36,19 @@ onMounted(()=> {
 	document.body.appendChild(script);
 });
 
+function setDuration() {
+	if (audioTag.value) {
+		duration.value = audioTag.value.duration;
+	}
+}
 function setSong(address,i) {
-	let audio = document.getElementById("audio");
+	let audio = audioTag.value;
 	audio.pause();
 	song.value = address;
 	audio.load();
 	audio.play();
 	index = i;
-	duration.value = audio.duration;
+	setDuration();
 }
 
 function songPaused() {
@@ -53,21 +59,21 @@ function songPlayed() {
 	isPlaying.value = true;
 }
 function songNext() {
-	let audio = document.getElementById("audio");
+	let audio = audioTag.value;
 	audio.pause();
 	song.value = songs[++index].link;
 	audio.load();
 	audio.play();
-	duration.value = audio.duration;
+	setDuration();
 }
 
 function songPrevious() {
-	let audio = document.getElementById("audio");
+	let audio = audioTag.value;
 	audio.pause();
 	song.value = songs[--index].link;
 	audio.load();
 	audio.play();
-	duration.value = audio.duration;
+	setDuration();
 }
 
 </script>
@@ -83,14 +89,16 @@ function songPrevious() {
 	<h1>IctoPlayer</h1>
 	<p>
 		<template v-if="song">
-			<audio id="audio"
-			@play="songPlayed"
-			@pause="songPaused"
-			@ended="songNext">
-				<source :src="song" type="audio/mpeg">
+			<audio id="audio" preload="metadata"
+				@play="songPlayed"
+				@pause="songPaused"
+				@ended="songNext"
+				@loadedmetadata="setDuration"
+				ref="audioElement">
+					<source :src="song" type="audio/mpeg">
 			</audio>
-			{{ songs[index].name }}
 			<MediaController v-model="isPlaying" :nextFunction="songNext" :previousFunction="songPrevious" :time=duration />
+			{{ songs[index].name }} <br>
 		</template>
 		<div v-else>
 			<button id="dropboxbutton">Esperando a dropbox</button>
