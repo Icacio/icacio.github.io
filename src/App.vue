@@ -1,6 +1,6 @@
 <script setup>
 import MediaController from './components/MediaController.vue'
-import {ref, onMounted} from "vue";
+import {ref, onMounted, useTemplateRef} from "vue";
 
 const song = ref(null);
 let songs = null;
@@ -8,7 +8,18 @@ let songs = null;
 let index = 0;
 const isPlaying = ref(false);
 const duration = ref(1);
+/*
+songs = [{name:"Be",link:"/audios/Be Alive (LFZ Remix).mp3"},
+{name:"One",link:"/audios/Be The One.mp3"},
+{name:"Beat",link:"/audios/Beat It.mp3"},
+{name:"Star",link:"/audios/Beautiful Stars (Original Mix).mp3"},
+{name:"Beautiful",link:"/audios/Beautiful Things.mp3"},
+]
+song.value = songs[0].link;
+const audioTag = useTemplateRef("audioElement")
+const currentTime = ref(0)
 
+/*/
 const options = {
 	success: function(files) {
 		songs = files;
@@ -34,15 +45,25 @@ onMounted(()=> {
 	}
 	document.body.appendChild(script);
 });
-
+//*/
+const updateTime = () => {
+	if(audioTag.value) {
+		currentTime.value = audioTag.value.currentTime;
+	}
+}
+function setDuration() {
+	if (audioTag.value) {
+		duration.value = audioTag.value.duration;
+	}
+}
 function setSong(address,i) {
-	let audio = document.getElementById("audio");
+	let audio = audioTag.value;
 	audio.pause();
 	song.value = address;
 	audio.load();
 	audio.play();
 	index = i;
-	duration.value = audio.duration;
+	setDuration();
 }
 
 function songPaused() {
@@ -53,21 +74,21 @@ function songPlayed() {
 	isPlaying.value = true;
 }
 function songNext() {
-	let audio = document.getElementById("audio");
+	let audio = audioTag.value;
 	audio.pause();
 	song.value = songs[++index].link;
 	audio.load();
 	audio.play();
-	duration.value = audio.duration;
+	setDuration();
 }
 
 function songPrevious() {
-	let audio = document.getElementById("audio");
+	let audio = audioTag.value;
 	audio.pause();
 	song.value = songs[--index].link;
 	audio.load();
 	audio.play();
-	duration.value = audio.duration;
+	setDuration();
 }
 
 </script>
@@ -83,14 +104,22 @@ function songPrevious() {
 	<h1>IctoPlayer</h1>
 	<p>
 		<template v-if="song">
-			<audio id="audio"
-			@play="songPlayed"
-			@pause="songPaused"
-			@ended="songNext">
-				<source :src="song" type="audio/mpeg">
+			<audio id="audio" preload="metadata"
+				@play="songPlayed"
+				@pause="songPaused"
+				@ended="songNext"
+				@timeupdate="updateTime"
+				@loadedmetadata="setDuration"
+				ref="audioElement">
+					<source :src="song" type="audio/mpeg">
 			</audio>
-			{{ songs[index].name }}
-			<MediaController v-model="isPlaying" :nextFunction="songNext" :previousFunction="songPrevious" :time=duration />
+			{{ songs[index].name }} <br>
+			<MediaController v-if="audioTag" v-model="isPlaying"
+				:nextFunction="songNext"
+				:previousFunction="songPrevious"
+				:time=duration
+				:audioTag="audioTag"
+				:currentTime="currentTime" />
 		</template>
 		<div v-else>
 			<button id="dropboxbutton">Esperando a dropbox</button>

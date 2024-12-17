@@ -1,5 +1,5 @@
 <script setup>
-import {ref } from "vue";
+import { computed } from "vue";
 const props = defineProps({
 	modelValue: Boolean,
 	nextFunction: {
@@ -11,37 +11,42 @@ const props = defineProps({
 		required: true
 	},
 	time: Number,
-})
-const emit = defineEmits();
-const timer = ref(0);
-let intervalId;
-function minutes() {
-	let audio = document.getElementById("audio");
-	if (audio) {
-		let seconds = audio.currentTime;
-		let hours = Math.floor(seconds/60);
-		seconds -= hours*60;
-		let minutes = Math.floor(seconds/60);
-		seconds -= minutes*60;
-		return hours+":"+minutes+":"+Math.floor(seconds);
+	audioTag: {
+		type:Object,
+		required:true,
+	},
+	currentTime: {
+		type: Number,
+		required: true
 	}
-	return "00:00:00"
-}
+})
 
+const emit = defineEmits();
+
+const minutes = computed(()=>{
+	return secondsToMinutes(props.currentTime);
+})
+const duration = computed(()=>{
+	return secondsToMinutes(props.time);
+})
+function secondsToMinutes(seconds) {
+	if (isNaN(seconds)) return "00:00:00"
+	let minutes = Math.floor(seconds/60);
+	seconds -= minutes*60;
+	let hours = Math.floor(seconds/60);
+	seconds -= hours*60;
+	return hours+":"+minutes+":"+Math.floor(seconds);
+}
 function play() {
-	let audio = document.getElementById("audio");
+	let audio = props.audioTag;
 	if (audio && !props.modelValue) {
 		audio.play();
 		emit("update:modelValue", true);
 	}
-	intervalId = setInterval(() =>{
-		timer.value += 100 / props.time;
-	},1000);
 }
 
 function pause() {
-	clearInterval(intervalId);
-	let audio = document.getElementById("audio");
+	let audio = props.audioTag;
 	if (audio && props.modelValue) {
 		audio.pause();
 		emit("update:modelValue", false); // update isPlaying in parent
@@ -50,8 +55,8 @@ function pause() {
 </script>
 
 <template>
-	<p>{{ minutes() }}</p>
-	<input type="range" id="a" name="a" v-bind:value="timer">
+	<p>{{ minutes }}/{{ duration }}</p>
+	<input type="range" id="a" name="a" v-model="audioTag.currentTime" min=0 :max="time">
  	<button @click="previousFunction()">
 		<img src="/images/previous.png">
 	</button>
