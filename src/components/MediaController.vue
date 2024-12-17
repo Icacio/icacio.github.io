@@ -15,20 +15,27 @@ const props = defineProps({
 		type:Object,
 		required:true,
 	},
+	currentTime: {
+		type: Number,
+		required: true
+	}
+})
+
+const minutes = computed(()=>{
+	return secondsToMinutes(props.currentTime);
+})
+const duration = computed(()=>{
+	return secondsToMinutes(props.time);
 })
 
 const emit = defineEmits();
-function minutes() {
-	let audio = document.getElementById("audio");
-	if (audio) {
-		let seconds = audio.currentTime;
-		let hours = Math.floor(seconds/60);
-		seconds -= hours*60;
+function secondsToMinutes(seconds) {
+	if (isNaN(seconds)) return "00:00:00"
+		let hours = Math.floor(seconds/3600);
+		seconds -= hours*3600;
 		let minutes = Math.floor(seconds/60);
 		seconds -= minutes*60;
 		return hours+":"+minutes+":"+Math.floor(seconds);
-	}
-	return "00:00:00"
 }
 
 function play() {
@@ -49,7 +56,7 @@ function pause() {
 </script>
 
 <template>
-	<p>{{ minutes() }}</p>
+	<p>{{ minutes }}/{{ duration }}</p>
 	<input type="range" id="a" name="a" v-model="audioTag.currentTime" min=0 :max="time">
  	<button @click="previousFunction()">
 		<img src="/images/previous.png">

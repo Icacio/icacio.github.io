@@ -9,6 +9,7 @@ let index = 0;
 const isPlaying = ref(false);
 const duration = ref(1);
 const audioTag = useTemplateRef("audioElement")
+const currentTime = ref(0)
 
 const options = {
 	success: function(files) {
@@ -36,6 +37,11 @@ onMounted(()=> {
 	document.body.appendChild(script);
 });
 
+const updateTime = () => {
+	if(audioTag.value) {
+		currentTime.value = audioTag.value.currentTime;
+	}
+}
 function setDuration() {
 	if (audioTag.value) {
 		duration.value = audioTag.value.duration;
@@ -93,6 +99,7 @@ function songPrevious() {
 				@play="songPlayed"
 				@pause="songPaused"
 				@ended="songNext"
+				@timeupdate="updateTime"
 				@loadedmetadata="setDuration"
 				ref="audioElement">
 					<source :src="song" type="audio/mpeg">
@@ -102,6 +109,7 @@ function songPrevious() {
 				:nextFunction="songNext"
 				:previousFunction="songPrevious"
 				:time=duration
+				:currentTime="currentTime"
 				:audioTag="audioTag" />
 		</template>
 		<div v-else>
