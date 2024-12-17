@@ -97,8 +97,12 @@ function songPrevious() {
 				ref="audioElement">
 					<source :src="song" type="audio/mpeg">
 			</audio>
-			<MediaController v-model="isPlaying" :nextFunction="songNext" :previousFunction="songPrevious" :time=duration />
 			{{ songs[index].name }} <br>
+			<MediaController v-if="audioTag" v-model="isPlaying"
+				:nextFunction="songNext"
+				:previousFunction="songPrevious"
+				:time=duration
+				:audioTag="audioTag" />
 		</template>
 		<div v-else>
 			<button id="dropboxbutton">Esperando a dropbox</button>

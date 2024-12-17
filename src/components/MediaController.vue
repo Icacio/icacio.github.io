@@ -1,5 +1,5 @@
 <script setup>
-import {ref } from "vue";
+import { computed } from "vue";
 const props = defineProps({
 	modelValue: Boolean,
 	nextFunction: {
@@ -11,10 +11,13 @@ const props = defineProps({
 		required: true
 	},
 	time: Number,
+	audioTag: {
+		type:Object,
+		required:true,
+	},
 })
+
 const emit = defineEmits();
-const timer = ref(0);
-let intervalId;
 function minutes() {
 	let audio = document.getElementById("audio");
 	if (audio) {
@@ -29,19 +32,15 @@ function minutes() {
 }
 
 function play() {
-	let audio = document.getElementById("audio");
+	let audio = props.audioTag;
 	if (audio && !props.modelValue) {
 		audio.play();
 		emit("update:modelValue", true);
 	}
-	intervalId = setInterval(() =>{
-		timer.value += 100 / props.time;
-	},1000);
 }
 
 function pause() {
-	clearInterval(intervalId);
-	let audio = document.getElementById("audio");
+	let audio = props.audioTag;
 	if (audio && props.modelValue) {
 		audio.pause();
 		emit("update:modelValue", false); // update isPlaying in parent
@@ -51,7 +50,7 @@ function pause() {
 
 <template>
 	<p>{{ minutes() }}</p>
-	<input type="range" id="a" name="a" v-bind:value="timer">
+	<input type="range" id="a" name="a" v-model="audioTag.currentTime" min=0 :max="time">
  	<button @click="previousFunction()">
 		<img src="/images/previous.png">
 	</button>
