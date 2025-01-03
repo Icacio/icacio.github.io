@@ -85,7 +85,7 @@ function songPrevious() {
 </script>
 
 <template>
-	<div class="left">
+	<div v-if="songs" class="left">
 		<p v-for="(song,index) in songs">
 			<button @click="setSong(song.link,index)">
 				{{ song.name }}
