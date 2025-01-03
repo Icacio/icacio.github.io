@@ -10,6 +10,8 @@ const isPlaying = ref(false);
 const duration = ref(1);
 const audioTag = useTemplateRef("audioElement")
 const currentTime = ref(0)
+const loading = ref("Conectando con dropbox");
+
 
 const options = {
 	success: function(files) {
@@ -26,15 +28,26 @@ const options = {
 };
 
 onMounted(()=> {
-	const script = document.createElement('script');
-	script.src = 'https://www.dropbox.com/static/api/2/dropins.js';
-	script.id = 'dropboxjs';
-	script.setAttribute('data-app-key', '3p019xr3e3jhfqb');
-	script.onload = () => {
-		var button = Dropbox.createChooseButton(options);
-		document.getElementById("dropboxbutton").replaceWith(button);
-	}
-	document.body.appendChild(script);
+	const checkDropboxLoaded = setInterval(() => {
+		if (typeof Dropbox !== 'undefined') {
+			clearInterval(checkDropboxLoaded);
+			var button = Dropbox.createChooseButton(options);
+			document.getElementById("dropboxbutton").replaceWith(button);
+		}
+		switch(loading.value){
+			case "Conectando con dropbox     ":
+				loading.value = "Conectando con dropbox.    ";
+				break;
+			case "Conectando con dropbox.    ":
+				loading.value = "Conectando con dropbox..   ";
+				break;
+			case "Conectando con dropbox..   ":
+				loading.value = "Conectando con dropbox...  ";
+				break;
+			default:
+				loading.value = "Conectando con dropbox     ";
+		}
+	}, 500);
 });
 
 const updateTime = () => {
@@ -113,7 +126,7 @@ function songPrevious() {
 				:audioTag="audioTag" />
 		</template>
 		<div v-else>
-			<button id="dropboxbutton">Esperando a dropbox</button>
+			<button id="dropboxbutton">{{ loading }}</button>
 		</div>
 	</p>
 </template>
