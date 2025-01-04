@@ -77,6 +77,13 @@ function pause() {
 input[type=range] {
 	width: 100%;
 }
-
-
+button {
+    background-color:transparent;
+	border: none;
+	border-radius: 50%;
+}
+button:hover {
+	background-color: #00000010;
+	border-radius: 50%;
+}
 </style>

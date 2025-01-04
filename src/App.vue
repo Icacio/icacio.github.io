@@ -117,15 +117,3 @@ function songPrevious() {
 		</div>
 	</p>
 </template>
-
-<style>
-.left {
-	position: fixed;
-    top: 0;
-    left: 0;
-    width: 200px;
-    height: 100%;
-    background-color: white;
-    overflow-y: auto;
-}
-</style>
