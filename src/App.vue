@@ -1,6 +1,7 @@
 <script setup>
 import MediaController from './components/MediaController.vue'
-import {ref, onMounted, useTemplateRef} from "vue";
+import Caricatore from './components/Caricatore.vue'
+import {ref, useTemplateRef} from "vue";
 
 const song = ref(null);
 let songs = null;
@@ -10,45 +11,9 @@ const isPlaying = ref(false);
 const duration = ref(1);
 const audioTag = useTemplateRef("audioElement")
 const currentTime = ref(0)
-const loading = ref("Conectando con dropbox");
 
 
-const options = {
-	success: function(files) {
-		songs = files;
-		song.value = files[0].link;
-		let audio = document.getElementById("audio");
-		if (audio) {
-			duration.value = audio.duration;
-		}
-	},
-	linkType: "direct",
-	multiselect: true,
-	extensions: ['audio'],
-};
 
-onMounted(()=> {
-	const checkDropboxLoaded = setInterval(() => {
-		if (typeof Dropbox !== 'undefined') {
-			clearInterval(checkDropboxLoaded);
-			var button = Dropbox.createChooseButton(options);
-			document.getElementById("dropboxbutton").replaceWith(button);
-		}
-		switch(loading.value){
-			case "Conectando con dropbox     ":
-				loading.value = "Conectando con dropbox.    ";
-				break;
-			case "Conectando con dropbox.    ":
-				loading.value = "Conectando con dropbox..   ";
-				break;
-			case "Conectando con dropbox..   ":
-				loading.value = "Conectando con dropbox...  ";
-				break;
-			default:
-				loading.value = "Conectando con dropbox     ";
-		}
-	}, 500);
-});
 
 const updateTime = () => {
 	if(audioTag.value) {
@@ -95,6 +60,16 @@ function songPrevious() {
 	setDuration();
 }
 
+function songsLoaded(files) {
+		console.log("songsLoaded");
+		songs = files;
+		song.value = files[0].link;
+		let audio = document.getElementById("audio");
+		if (audio) {
+			duration.value = audio.duration;
+		}
+}
+
 </script>
 
 <template>
@@ -125,8 +100,6 @@ function songPrevious() {
 				:currentTime="currentTime"
 				:audioTag="audioTag" />
 		</template>
-		<div v-else>
-			<button id="dropboxbutton">{{ loading }}</button>
-		</div>
+		<Caricatore @songsLoaded="songsLoaded" v-else />
 	</p>
 </template>
