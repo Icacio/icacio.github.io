@@ -18,6 +18,10 @@ const props = defineProps({
 	currentTime: {
 		type: Number,
 		required: true
+	},
+	shuffle: {
+		type: Function,
+		required: true
 	}
 })
 
@@ -53,13 +57,23 @@ function pause() {
 		emit("update:modelValue", false); // update isPlaying in parent
 	}
 };
+
+function setVolume(value) {
+	let audio = props.audioTag;
+	if (audio) {
+		audio.volume = value;
+	}
+}
 </script>
 
 <template>
 	<p>{{ minutes }}/{{ duration }}</p>
 	<input type="range" id="a" name="a" v-model="audioTag.currentTime" min=0 :max="time">
- 	<button @click="previousFunction()">
-		<img src="/images/previous.png">
+	<div>
+		<input type="range" min="0" max="1" step="0.01" v-model="audioTag.volume" class="vertical-range">
+	</div>
+	<button @click="previousFunction()">
+	<img src="/images/previous.png">
 	</button>
 	<button v-show="!modelValue" @click="play()">
 		<img src="/images/play.png">
@@ -70,6 +84,9 @@ function pause() {
 	<button @click="nextFunction()">
 		<img src="/images/previous.png"
 		style="transform: scaleX(-1);">
+	</button>
+	<button @click="shuffle()">
+		<img src="/images/shuffle.png">
 	</button>
 </template>
 
@@ -85,5 +102,11 @@ button {
 button:hover {
 	background-color: #00000010;
 	border-radius: 50%;
+}
+.vertical-range {
+  width: 10px;
+  height: 30px;
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 </style>

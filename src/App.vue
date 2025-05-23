@@ -10,45 +10,41 @@ const isPlaying = ref(false);
 const duration = ref(1);
 const audioTag = useTemplateRef("audioElement")
 const currentTime = ref(0)
-const loading = ref("Conectando con dropbox");
+const folderName = ref("http://localhost:8000/");
 
 
-const options = {
-	success: function(files) {
+function loadMusic (files) {
 		songs = files;
 		song.value = files[0].link;
 		let audio = document.getElementById("audio");
 		if (audio) {
 			duration.value = audio.duration;
 		}
-	},
-	linkType: "direct",
-	multiselect: true,
-	extensions: ['audio'],
-};
-
-onMounted(()=> {
-	const checkDropboxLoaded = setInterval(() => {
-		if (typeof Dropbox !== 'undefined') {
-			clearInterval(checkDropboxLoaded);
-			var button = Dropbox.createChooseButton(options);
-			document.getElementById("dropboxbutton").replaceWith(button);
-		}
-		switch(loading.value){
-			case "Conectando con dropbox     ":
-				loading.value = "Conectando con dropbox.    ";
-				break;
-			case "Conectando con dropbox.    ":
-				loading.value = "Conectando con dropbox..   ";
-				break;
-			case "Conectando con dropbox..   ":
-				loading.value = "Conectando con dropbox...  ";
-				break;
-			default:
-				loading.value = "Conectando con dropbox     ";
-		}
-	}, 500);
-});
+}
+function loadLocal() {
+	try {
+		fetch(folderName.value+".json")
+			.then(response => {
+				const contentType = response.headers.get("content-type");
+				if (contentType && contentType.includes("application/json")) {
+					return response.json();
+				} else {
+					throw new Error("Invalid JSON file");
+				}}).then(data => {
+					if (data && Array.isArray(data)) {
+						loadMusic(data);
+					} else {
+						console,error("Invalid JSON format");
+					}
+				})
+			.catch(error => {
+				console.error("Error loading songs:", error);
+			});
+	}
+	catch (e) {
+		console.error(e);
+	}
+}
 
 const updateTime = () => {
 	if(audioTag.value) {
@@ -94,14 +90,23 @@ function songPrevious() {
 	audio.play();
 	setDuration();
 }
-
+function shuffle() {
+	const current = songs[index];
+	songs.splice(index, 1);
+	songs.sort(() => Math.random() - 0.5);
+	songs.unshift(current);
+	index = 0;
+}
 </script>
 
 <template>
 	<div v-if="songs" class="left">
-		<p v-for="(song,index) in songs">
-			<button @click="setSong(song.link,index)">
-				{{ song.name }}
+		<p v-for="(songListing,i) in songs">
+			<label v-if="songListing.link === song">
+				{{ songListing.name }}
+			</label>
+			<button v-else @click="setSong(songListing.link,i)">
+				{{ songListing.name }}
 			</button>	
 		</p>
 	</div>
@@ -123,10 +128,14 @@ function songPrevious() {
 				:previousFunction="songPrevious"
 				:time=duration
 				:currentTime="currentTime"
-				:audioTag="audioTag" />
+				:audioTag="audioTag" 
+				:shuffle="shuffle"/>
 		</template>
 		<div v-else>
-			<button id="dropboxbutton">{{ loading }}</button>
+			<form @submit.prevent="loadLocal">
+				<input type="text" v-model="folderName">
+				<button type="submit">Load</button>
+			</form>
 		</div>
 	</p>
 </template>

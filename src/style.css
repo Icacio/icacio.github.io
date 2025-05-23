@@ -29,6 +29,7 @@ button:hover {
   background-color: #00000010;
 }
 
+
 #app {
 	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   max-width: 1280px;
@@ -45,4 +46,16 @@ button:hover {
     height: 100%;
     background-color: white;
     overflow-y: auto;
+}
+
+.left button {
+	width: 100%;
+  background-color: #cccccc7a;
+  color: #222;
+  border: 1px solid #aaa;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  transition: background 0.2s;
 }
