@@ -18,6 +18,10 @@ const props = defineProps({
 	currentTime: {
 		type: Number,
 		required: true
+	},
+	shuffle: {
+		type: Function,
+		required: true
 	}
 })
 
@@ -71,6 +75,12 @@ function pause() {
 		<img src="/images/previous.png"
 		style="transform: scaleX(-1);">
 	</button>
+	<button @click="shuffle()">
+		<img src="/images/shuffle.png">
+	</button>
+	<div>
+		<input type="range" min="0" max="1" step="0.01" v-model="audioTag.volume">
+	</div>
 </template>
 
 <style scoped>

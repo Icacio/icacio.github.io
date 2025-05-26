@@ -4,7 +4,7 @@ import Caricatore from './components/Caricatore.vue'
 import {ref, useTemplateRef} from "vue";
 
 const song = ref(null);
-let songs = null;
+let songs = ref(null);
 
 let index = 0;
 const isPlaying = ref(false);
@@ -45,7 +45,7 @@ function songPlayed() {
 function songNext() {
 	let audio = audioTag.value;
 	audio.pause();
-	song.value = songs[++index].link;
+	song.value = songs.value[++index].link;
 	audio.load();
 	audio.play();
 	setDuration();
@@ -54,7 +54,7 @@ function songNext() {
 function songPrevious() {
 	let audio = audioTag.value;
 	audio.pause();
-	song.value = songs[--index].link;
+	song.value = songs.value[--index].link;
 	audio.load();
 	audio.play();
 	setDuration();
@@ -62,12 +62,19 @@ function songPrevious() {
 
 function songsLoaded(files) {
 		console.log("songsLoaded");
-		songs = files;
+		songs.value = files;
 		song.value = files[0].link;
 		let audio = document.getElementById("audio");
 		if (audio) {
 			duration.value = audio.duration;
 		}
+}
+function shuffle() {
+	const current = songs.value[index];
+	songs.value.splice(index, 1);
+	songs.value.sort(() => Math.random() - 0.5);
+	songs.value.unshift(current);
+	index = 0;
 }
 
 </script>
@@ -98,7 +105,8 @@ function songsLoaded(files) {
 				:previousFunction="songPrevious"
 				:time=duration
 				:currentTime="currentTime"
-				:audioTag="audioTag" />
+				:audioTag="audioTag" 
+				:shuffle="shuffle"/>
 		</template>
 		<Caricatore @songsLoaded="songsLoaded" v-else />
 	</p>
