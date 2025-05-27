@@ -12,9 +12,6 @@ const duration = ref(1);
 const audioTag = useTemplateRef("audioElement")
 const currentTime = ref(0)
 
-
-
-
 const updateTime = () => {
 	if(audioTag.value) {
 		currentTime.value = audioTag.value.currentTime;
@@ -60,8 +57,7 @@ function songPrevious() {
 	setDuration();
 }
 
-function songsLoaded(files) {
-		console.log("songsLoaded");
+function loadMusic (files) {
 		songs.value = files;
 		song.value = files[0].link;
 		let audio = document.getElementById("audio");
@@ -69,6 +65,7 @@ function songsLoaded(files) {
 			duration.value = audio.duration;
 		}
 }
+
 function shuffle() {
 	const current = songs.value[index];
 	songs.value.splice(index, 1);
@@ -81,9 +78,12 @@ function shuffle() {
 
 <template>
 	<div v-if="songs" class="left">
-		<p v-for="(song,index) in songs">
-			<button @click="setSong(song.link,index)">
-				{{ song.name }}
+		<p v-for="(songListing,i) in songs">
+			<label v-if="songListing.link === song">
+				{{ songListing.name }}
+			</label>
+			<button v-else @click="setSong(songListing.link,i)">
+				{{ songListing.name }}
 			</button>	
 		</p>
 	</div>
@@ -108,6 +108,6 @@ function shuffle() {
 				:audioTag="audioTag" 
 				:shuffle="shuffle"/>
 		</template>
-		<Caricatore @songsLoaded="songsLoaded" v-else />
+		<Caricatore @loadMusic="loadMusic" v-else />
 	</p>
 </template>

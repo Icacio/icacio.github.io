@@ -2,11 +2,11 @@
 import {onMounted, ref, onBeforeUnmount} from "vue";
 
 const loading = ref("Conectando con dropbox");
-const emit = defineEmits(["songsLoaded"]);
+const emit = defineEmits(["loadMusic"]);
     
 const options = {
 	success: function(files) {
-        emit("songsLoaded", files);
+        emit("loadMusic", files);
 	},
 	linkType: "direct",
 	multiselect: true,
